@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">PomodoroThechnique</string>
+    <string name="titulo">Título</string>
+    <string name="descricao">Descrição</string>
+    <string name="promodoros">Promodoros</string>
+    <string name="salvar">Salvar</string>
+    <string name="NovoPomodoro">Adicionar Tarefa</string>
+    <string name="alerta_quantidade_pomodors">Não há pomodoros programados.</string>
+    <string name="alertaIntervaloTitulo">Hora da pausa!</string>
+    <string name="intervalo_de_cinco_minutos">Pare por 5 minutos e volte a atividade.</string>
+</resources>
