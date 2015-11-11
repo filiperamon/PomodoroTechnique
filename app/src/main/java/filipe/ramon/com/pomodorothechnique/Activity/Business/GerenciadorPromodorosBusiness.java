@@ -21,11 +21,7 @@ public class GerenciadorPromodorosBusiness {
         pomodoroDao = new PomodoroDao(context);
     }
 
-    public void iniciaContator(){
-
-    }
-
-    public void cancelaContador(){
+    public void deletePomodoros(){
 
     }
 

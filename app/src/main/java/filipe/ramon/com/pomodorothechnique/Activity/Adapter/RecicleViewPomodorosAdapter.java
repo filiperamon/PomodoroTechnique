@@ -1,6 +1,8 @@
 package filipe.ramon.com.pomodorothechnique.Activity.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +27,7 @@ import filipe.ramon.com.pomodorothechnique.R;
 /**
  * Created by ufc155.barbosa on 09/11/2015.
  */
-public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleViewPomodorosAdapter.PomodoroViewHolder>{
+public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleViewPomodorosAdapter.pomodoroViewHolder>{
 
     List<Pomodoro> listPomodoros;
     private MyCountDownTimer timer;
@@ -45,22 +48,22 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
     }
 
     @Override
-    public PomodoroViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public pomodoroViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.layout_card_view, viewGroup, false);
-        PomodoroViewHolder pvh = new PomodoroViewHolder(v);
+        pomodoroViewHolder pvh = new pomodoroViewHolder(v);
         return pvh;
     }
 
     @Override
-    public void onBindViewHolder(final PomodoroViewHolder pomodoroViewHolder, int i) {
+    public void onBindViewHolder(final pomodoroViewHolder pomodoroViewHolder, int i) {
 
         pomodoroViewHolder.pomodoroTitulo.setText(listPomodoros.get(i).getTitulo());
         pomodoroViewHolder.pomodoroDescricao.setText(listPomodoros.get(i).getDescricao());
         pomodoroViewHolder.pomodoroNum.setText(String.valueOf(listPomodoros.get(i).getPomodoro()));
         pomodoroViewHolder.pomodoroId.setText(String.valueOf(listPomodoros.get(i).getId()));
 
-        pomodoroViewHolder.btnIniciar.setOnClickListener(new View.OnClickListener() {
+        pomodoroViewHolder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -71,9 +74,8 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
 
                 if (timer == null) {
                     if (quantidadePomodoros > 0) {
-                        timer = new MyCountDownTimer(context, chronometro, 1 * 60 * 1000, 1000, pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
+                        timer = new MyCountDownTimer(context, chronometro, 25 * 60 * 1000, 1000, pomodoroViewHolder.pomodoroNum, id);
                         timer.start();
-                        pomodoroViewHolder.btnIniciar.setEnabled(false);
                     } else {
                         pomodoroViewHolder.pomodoroNum.setTextColor(Color.RED);
                     }
@@ -81,40 +83,10 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
             }
         });
 
-        pomodoroViewHolder.btnConcluir.setOnClickListener(new View.OnClickListener() {
+        pomodoroViewHolder.btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                gerenciador = new GerenciadorPromodorosBusiness(context);
-
-                int id = Integer.valueOf( pomodoroViewHolder.pomodoroId.getText().toString() );
-                int quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
-
-                if(timer != null){
-                    pomodoroViewHolder.btnIniciar.setEnabled(true);
-                    timer.cancel();
-                    timer = null;
-                    chronometro.setText("25:00");
-
-                    if(quantidadePomodoros > 0) {
-                        gerenciador.updateQuantidadePomodoros(id, quantidadePomodoros);
-                        quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
-                        pomodoroViewHolder.pomodoroNum.setText(String.valueOf(String.valueOf(quantidadePomodoros)));
-                    }
-                }
-            }
-        });
-
-
-        pomodoroViewHolder.cv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*Intent intent = new Intent(v.getContext(), DetailPetAnimalActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable( v.getContext().getString( R.string.pet ),p);
-                intent.putExtras(b);
-                v.getContext().startActivity(intent);*/
+                openAlert(v);
             }
         });
     }
@@ -124,25 +96,48 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class PomodoroViewHolder extends RecyclerView.ViewHolder {
+    private void openAlert(View view) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+        alertDialogBuilder.setTitle(context.getString(R.string.alert_confirmacao));
+        alertDialogBuilder.setMessage(context.getString(R.string.alerta_descricao_confirmacao));
+        alertDialogBuilder.setPositiveButton(context.getString(R.string.sim), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton(context.getString(R.string.nao), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show alert
+        alertDialog.show();
+
+    }
+
+
+    public static class pomodoroViewHolder extends RecyclerView.ViewHolder {
 
         CardView cv;
         TextView pomodoroTitulo;
         TextView pomodoroDescricao;
         TextView pomodoroNum;
         TextView pomodoroId;
-        Button btnIniciar;
-        Button btnConcluir;
+        ImageButton btnClose;
 
-        PomodoroViewHolder(View itemView) {
+        pomodoroViewHolder(View itemView) {
             super(itemView);
             cv = (CardView)itemView.findViewById(R.id.cv);
             pomodoroTitulo = (TextView)itemView.findViewById(R.id.pomodoroTitulo);
             pomodoroDescricao = (TextView)itemView.findViewById(R.id.pomodoroDescricao);
             pomodoroNum = (TextView)itemView.findViewById(R.id.Pomodoros);
             pomodoroId = (TextView)itemView.findViewById(R.id.textViewIdPomodoro);
-            btnIniciar = (Button)itemView.findViewById(R.id.buttonIniciar);
-            btnConcluir = (Button)itemView.findViewById(R.id.buttonConcluir);
+            btnClose = (ImageButton)itemView.findViewById(R.id.imageClose);
         }
     }
 }

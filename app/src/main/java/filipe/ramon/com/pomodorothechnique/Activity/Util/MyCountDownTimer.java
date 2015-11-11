@@ -18,17 +18,15 @@ import filipe.ramon.com.pomodorothechnique.R;
 public class MyCountDownTimer extends CountDownTimer {
     private Context context;
     private TextView tv;
-    private TextView tvBtnInicio;
     private TextView tvQuantidadePomodoros;
     private long timeInFuture;
     private int idPomodoro;
 
 
-    public MyCountDownTimer(Context context, TextView tv, long timeInFuture, long interval, TextView tvBtnInicio, TextView tvQuantidadePomodoros, int idPomodoro){
+    public MyCountDownTimer(Context context, TextView tv, long timeInFuture, long interval, TextView tvQuantidadePomodoros, int idPomodoro){
         super(timeInFuture, interval);
         this.context = context;
         this.tv = tv;
-        this.tvBtnInicio = tvBtnInicio;
         this.idPomodoro = idPomodoro;
         this.tvQuantidadePomodoros = tvQuantidadePomodoros;
     }
@@ -43,7 +41,6 @@ public class MyCountDownTimer extends CountDownTimer {
     public void onFinish() {
         timeInFuture -= 1000;
         tv.setText(getCorretcTimer(true, timeInFuture) + ":" + getCorretcTimer(false, timeInFuture));
-        tvBtnInicio.setEnabled(true);
 
         /*NOTIFICATION*/
 
