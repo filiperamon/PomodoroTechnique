@@ -1,6 +1,7 @@
 package filipe.ramon.com.pomodorothechnique.Activity.Activitys;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,10 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import filipe.ramon.com.pomodorothechnique.Activity.Adapter.RecicleViewPomodorosAdapter;
@@ -26,6 +25,7 @@ public class ListTasksActivity extends AppCompatActivity {
     private RecyclerView rvList;
     private List<Pomodoro> listPomodoros;
     private TextView chronometro;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,18 @@ public class ListTasksActivity extends AppCompatActivity {
         rvList = (RecyclerView) findViewById(R.id.rvListPomodoros);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rvList.setLayoutManager(llm);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent iNewTask = new Intent(ListTasksActivity.this, NewPomodoroActivity.class);
+                startActivity(iNewTask);
+
+                //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                //.setAction("Action", null).show();
+            }
+        });
 
     }
 
@@ -68,8 +80,7 @@ public class ListTasksActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add) {
-            Intent iNewTask = new Intent(ListTasksActivity.this, NewPomodoroActivity.class);
-            startActivity(iNewTask);
+
             return true;
         }
 
@@ -79,9 +90,10 @@ public class ListTasksActivity extends AppCompatActivity {
     public void inicializaComponentes(){
         rvList = (RecyclerView) findViewById(R.id.rvListPomodoros);
         chronometro = (TextView) findViewById(R.id.chronometer);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
-    private void initializeData(){
+    public void initializeData(){
         PomodoroDao pDao = new PomodoroDao(this);
         listPomodoros = pDao.getTodosPomodoros();
         pDao.close();

@@ -21,8 +21,8 @@ public class GerenciadorPromodorosBusiness {
         pomodoroDao = new PomodoroDao(context);
     }
 
-    public void deletePomodoros(){
-
+    public int deletePomodoro(int id){
+        return  pomodoroDao.deletePomodoro(id);
     }
 
     public int getQuantidadePomodoros(String id){

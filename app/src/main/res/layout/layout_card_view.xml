@@ -39,7 +39,9 @@
                 android:id="@+id/pomodoroDescricao"
                 android:text="Descricao"
                 android:layout_below="@+id/pomodoroTitulo"
-                android:layout_alignStart="@+id/pomodoroTitulo" />
+                android:layout_alignStart="@+id/pomodoroTitulo"
+                android:layout_above="@+id/Pomodoros"
+                android:layout_alignParentEnd="true" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -68,8 +70,8 @@
                 android:layout_marginBottom="33dp" />
 
             <ImageButton
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/imageClose"
                 android:src="@drawable/close"
                 android:layout_alignTop="@+id/pomodoroTitulo"

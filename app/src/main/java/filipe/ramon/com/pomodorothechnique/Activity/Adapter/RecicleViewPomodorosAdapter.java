@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import filipe.ramon.com.pomodorothechnique.Activity.Activitys.ListTasksActivity;
+import filipe.ramon.com.pomodorothechnique.Activity.Activitys.TimerActivity;
 import filipe.ramon.com.pomodorothechnique.Activity.Business.GerenciadorPromodorosBusiness;
 import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.Activity.Util.MyCountDownTimer;
@@ -32,10 +34,11 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
     List<Pomodoro> listPomodoros;
     private MyCountDownTimer timer;
     private TextView chronometro;
-    private Context context;
+    private ListTasksActivity context;
     private GerenciadorPromodorosBusiness gerenciador;
+    private int idPomodoroClicado;
 
-    public RecicleViewPomodorosAdapter(Context context, List<Pomodoro> pomodoros, MyCountDownTimer timer, TextView chronometro){
+    public RecicleViewPomodorosAdapter(ListTasksActivity context, List<Pomodoro> pomodoros, MyCountDownTimer timer, TextView chronometro){
         this.context = context;
         this.listPomodoros = pomodoros;
         this.timer = timer;
@@ -67,7 +70,15 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
             @Override
             public void onClick(View v) {
 
-                gerenciador = new GerenciadorPromodorosBusiness(context);
+                int id = Integer.valueOf(pomodoroViewHolder.pomodoroId.getText().toString());
+
+                Intent i = new Intent(context, TimerActivity.class);
+                Bundle parametro = new Bundle();
+                parametro.putInt("id",id);
+                i.putExtras(parametro);
+                context.startActivity(i);
+
+                /*gerenciador = new GerenciadorPromodorosBusiness(context);
 
                 int id = Integer.valueOf(pomodoroViewHolder.pomodoroId.getText().toString());
                 int quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
@@ -79,13 +90,14 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
                     } else {
                         pomodoroViewHolder.pomodoroNum.setTextColor(Color.RED);
                     }
-                }
+                }*/
             }
         });
 
         pomodoroViewHolder.btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                idPomodoroClicado = Integer.valueOf(pomodoroViewHolder.pomodoroId.getText().toString());
                 openAlert(v);
             }
         });
@@ -97,20 +109,24 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
     }
 
     private void openAlert(View view) {
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
         alertDialogBuilder.setTitle(context.getString(R.string.alert_confirmacao));
         alertDialogBuilder.setMessage(context.getString(R.string.alerta_descricao_confirmacao));
         alertDialogBuilder.setPositiveButton(context.getString(R.string.sim), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-
+                gerenciador = new GerenciadorPromodorosBusiness(context);
+                gerenciador.deletePomodoro(idPomodoroClicado);
+                context.initializeData();
+                context.atualizarLista();
             }
         });
 
         alertDialogBuilder.setNegativeButton(context.getString(R.string.nao), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
+
             }
         });
 

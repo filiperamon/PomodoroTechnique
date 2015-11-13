@@ -58,11 +58,11 @@ public class MyCountDownTimer extends CountDownTimer {
 
         /*Atualiza quantidade de pomodoros*/
 
-        GerenciadorPromodorosBusiness gerenciador = new GerenciadorPromodorosBusiness(context);
-        int quantidadePomodoros = Integer.valueOf(tvQuantidadePomodoros.getText().toString());
+        //GerenciadorPromodorosBusiness gerenciador = new GerenciadorPromodorosBusiness(context);
+        //int quantidadePomodoros = Integer.valueOf(tvQuantidadePomodoros.getText().toString());
 
-        gerenciador.updateQuantidadePomodoros(idPomodoro, quantidadePomodoros);
-        tvQuantidadePomodoros.setText(String.valueOf(String.valueOf(gerenciador.getQuantidadePomodoros(String.valueOf(idPomodoro)))));
+        //gerenciador.updateQuantidadePomodoros(idPomodoro, quantidadePomodoros);
+        //tvQuantidadePomodoros.setText(String.valueOf(String.valueOf(gerenciador.getQuantidadePomodoros(String.valueOf(idPomodoro)))));
 
         /*Atualiza quantidade de pomodoros*/
     }
