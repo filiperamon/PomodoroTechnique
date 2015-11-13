@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import filipe.ramon.com.pomodorothechnique.Activity.Business.GerenciadorPromodorosBusiness;
 import filipe.ramon.com.pomodorothechnique.Activity.Dao.PomodoroDao;
 import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.R;
@@ -35,9 +36,8 @@ public class NewPomodoroActivity extends AppCompatActivity {
                 p.setAtivo(1);
                 p.setConcluido(0);
 
-                PomodoroDao pDao = new PomodoroDao(NewPomodoroActivity.this);
-                pDao.setPomodoro(p);
-                pDao.close();
+                GerenciadorPromodorosBusiness pBO = new GerenciadorPromodorosBusiness(NewPomodoroActivity.this);
+                pBO.insertPomodoro(p);
 
                 finish();
             }

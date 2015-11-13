@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import filipe.ramon.com.pomodorothechnique.Activity.Adapter.RecicleViewPomodorosAdapter;
+import filipe.ramon.com.pomodorothechnique.Activity.Business.GerenciadorPromodorosBusiness;
 import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.Activity.Dao.PomodoroDao;
 import filipe.ramon.com.pomodorothechnique.Activity.Util.MyCountDownTimer;
@@ -55,28 +56,27 @@ public class ListTasksActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
 
-        if(timer != null){
+        if (timer != null) {
             timer.cancel();
         }
     }
 
-    public void inicializaComponentes(){
+    public void inicializaComponentes() {
         rvList = (RecyclerView) findViewById(R.id.rvListPomodoros);
         chronometro = (TextView) findViewById(R.id.chronometer);
         btAdicionarTarefa = (Button) findViewById(R.id.buttonNewTask);
     }
 
-    private void initializeData(){
-        PomodoroDao pDao = new PomodoroDao(this);
-        listPomodoros = pDao.getTodosPomodoros();
-        pDao.close();
+    private void initializeData() {
+        GerenciadorPromodorosBusiness pBOo = new GerenciadorPromodorosBusiness(this);
+        listPomodoros = pBOo.getTodosPomodoros();
     }
 
-    public void atualizarLista(){
-        if(listPomodoros != null) {
+    public void atualizarLista() {
+        if (listPomodoros != null) {
             RecicleViewPomodorosAdapter adapter = new RecicleViewPomodorosAdapter(this, listPomodoros, timer, chronometro);
             rvList.setAdapter(adapter);
         }

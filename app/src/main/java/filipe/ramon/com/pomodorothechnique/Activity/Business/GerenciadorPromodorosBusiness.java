@@ -3,7 +3,10 @@ package filipe.ramon.com.pomodorothechnique.Activity.Business;
 import android.content.Context;
 import android.widget.TextView;
 
+import java.util.List;
+
 import filipe.ramon.com.pomodorothechnique.Activity.Dao.PomodoroDao;
+import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.Activity.Util.MyCountDownTimer;
 
 /**
@@ -21,19 +24,30 @@ public class GerenciadorPromodorosBusiness {
         pomodoroDao = new PomodoroDao(context);
     }
 
-    public void iniciaContator(){
 
+    //CRUD
+    public void insertPomodoro(Pomodoro pomodoro){
+        pomodoroDao.setPomodoro(pomodoro);
     }
 
-    public void cancelaContador(){
+    public List<Pomodoro> getTodosPomodoros(){
+        return  pomodoroDao.getTodosPomodoros();
+    }
 
+    public void deletaPomodoro(int id) {
+        pomodoroDao.deletePomodoro(id);
+    }
+
+    public void updatePomodoros(Pomodoro pomodoro){
+        pomodoroDao.updatePomodoros(pomodoro);
+    }
+    //CRUD
+
+    public void updateQuantidadePomodoros(int id, int numPomodoros){
+        pomodoroDao.updateQuantidadePomodoros(id, numPomodoros-1);
     }
 
     public int getQuantidadePomodoros(String id){
         return pomodoroDao.getQuantidadePomodoros(id);
-    }
-
-    public void updateQuantidadePomodoros(int id, int numPomodoros){
-        pomodoroDao.updateQuantidadePomodoros(id, numPomodoros-1);
     }
 }

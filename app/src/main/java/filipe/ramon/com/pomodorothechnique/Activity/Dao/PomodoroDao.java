@@ -99,6 +99,22 @@ public class PomodoroDao extends SQLiteOpenHelper {
         ContentValues newValues = new ContentValues();
         newValues.put("numero_pomodoros", numPomodoros);
 
-        db.update(TABELA, newValues, "id = ? ", new String[]{String.valueOf(id)} );
+        db.update(TABELA, newValues, "id = ? ", new String[]{String.valueOf(id)});
+    }
+
+    public void updatePomodoros(Pomodoro pomodoro){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("titulo", pomodoro.getTitulo());
+        newValues.put("descricao", pomodoro.getDescricao());
+        newValues.put("numero_pomodoros", pomodoro.getPomodoro());
+
+        db.update(TABELA, newValues, "id = ? ", new String[]{String.valueOf(pomodoro.getId())});
+    }
+
+    public int deletePomodoro(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String where = "id=?";
+        return db.delete(TABELA, where, new String[]{String.valueOf(id)});
     }
 }
