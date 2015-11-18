@@ -21,16 +21,12 @@ public class PomodoroDao extends SQLiteOpenHelper {
     private static String TABELA = "Pomodoro";
     private static String[] COLS = {"id","titulo","descricao","numero_pomodoros", "ativo","concluido"};
 
-    //private SQLiteDatabase db;
-
     public PomodoroDao(Context context){
         super(context, TABELA, null, VERSION);
-        Log.i("DAO", "Construtor");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i("DAO", "CRIOU O BANCO");
         String sql = "CREATE TABLE " + TABELA +
                 " ( id INTEGER PRIMARY KEY, "+
                 " titulo TEXT, " +

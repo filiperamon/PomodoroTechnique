@@ -3,16 +3,17 @@
     xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="5dp"
-    android:paddingBottom="5dp"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
     >
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cv"
+        android:elevation="@dimen/item_touch_helper_max_drag_scroll_per_frame"
         >
 
         <RelativeLayout
@@ -38,7 +39,7 @@
                 android:id="@+id/pomodoroTitulo"
                 android:textSize="20sp"
                 android:text="Título"
-                android:layout_alignParentTop="true"
+                android:layout_alignTop="@+id/pomodoroImg"
                 android:layout_toEndOf="@+id/pomodoroImg" />
 
             <TextView
@@ -91,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:text="Pomodoros: "
                 android:id="@+id/textView"
-                android:layout_alignBottom="@+id/buttonConcluir"
+                android:layout_below="@+id/buttonConcluir"
                 android:layout_alignStart="@+id/pomodoroDescricao" />
 
         </RelativeLayout>

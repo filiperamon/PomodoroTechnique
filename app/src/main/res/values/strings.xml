@@ -8,4 +8,12 @@
     <string name="alerta_quantidade_pomodors">Não há pomodoros programados.</string>
     <string name="alertaIntervaloTitulo">Hora da pausa!</string>
     <string name="intervalo_de_cinco_minutos">Pare por 5 minutos e volte a atividade.</string>
+    <string name="editar">Editar</string>
+    <string name="excluir">Excluir</string>
+    <string name="salvarEdicao">Salvar alteração</string>
+    <string name="pausa">Pausa</string>
+    <string name="descrica_pausa">Pausa de 5 minutos.</string>
+    <string name="vinte_cinco_minutos">25:00</string>
+    <string name="alert">Alerta</string>
+    <string name="alert_descricao_pausa">Deseja inicializar o descanso?</string>
 </resources>

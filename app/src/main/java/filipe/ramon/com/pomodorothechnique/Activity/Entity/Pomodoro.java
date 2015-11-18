@@ -16,6 +16,11 @@ public class Pomodoro implements Serializable {
     private int ativo;
     private int concluido;
 
+
+    public void Pomodoro(){
+
+    }
+
     public int getConcluido() {
         return concluido;
     }
@@ -40,9 +45,6 @@ public class Pomodoro implements Serializable {
         this.id = id;
     }
 
-    public void Pomodoro(){
-
-    }
     public String getTitulo() {
         return titulo;
     }

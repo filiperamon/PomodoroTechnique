@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import filipe.ramon.com.pomodorothechnique.Activity.Activitys.ListTasksActivity;
 import filipe.ramon.com.pomodorothechnique.Activity.Business.GerenciadorPromodorosBusiness;
 import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.Activity.Util.MyCountDownTimer;
@@ -24,19 +27,30 @@ import filipe.ramon.com.pomodorothechnique.R;
 /**
  * Created by ufc155.barbosa on 09/11/2015.
  */
-public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleViewPomodorosAdapter.PomodoroViewHolder>{
+public class RecicleViewPomodorosAdapter
+        extends RecyclerView.Adapter<RecicleViewPomodorosAdapter.PomodoroViewHolder>{
 
     List<Pomodoro> listPomodoros;
     private MyCountDownTimer timer;
     private TextView chronometro;
-    private Context context;
+    private ListTasksActivity context;
     private GerenciadorPromodorosBusiness gerenciador;
+    private int position;
 
-    public RecicleViewPomodorosAdapter(Context context, List<Pomodoro> pomodoros, MyCountDownTimer timer, TextView chronometro){
+    public RecicleViewPomodorosAdapter(ListTasksActivity context, List<Pomodoro> pomodoros,
+                                       MyCountDownTimer timer, TextView chronometro){
         this.context = context;
         this.listPomodoros = pomodoros;
         this.timer = timer;
         this.chronometro = chronometro;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Override
@@ -55,6 +69,7 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
     @Override
     public void onBindViewHolder(final PomodoroViewHolder pomodoroViewHolder, int i) {
 
+        context.registerForContextMenu(pomodoroViewHolder.cv);
         pomodoroViewHolder.pomodoroTitulo.setText(listPomodoros.get(i).getTitulo());
         pomodoroViewHolder.pomodoroDescricao.setText(listPomodoros.get(i).getDescricao());
         pomodoroViewHolder.pomodoroNum.setText(String.valueOf(listPomodoros.get(i).getPomodoro()));
@@ -71,9 +86,8 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
 
                 if (timer == null) {
                     if (quantidadePomodoros > 0) {
-                        timer = new MyCountDownTimer(context, chronometro, 1 * 60 * 1000, 1000, pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
-                        timer.start();
-                        pomodoroViewHolder.btnIniciar.setEnabled(false);
+                        gerenciador.ativaTimer(context, timer, chronometro, 1,
+                                pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
                     } else {
                         pomodoroViewHolder.pomodoroNum.setTextColor(Color.RED);
                     }
@@ -87,34 +101,30 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
 
                 gerenciador = new GerenciadorPromodorosBusiness(context);
 
-                int id = Integer.valueOf( pomodoroViewHolder.pomodoroId.getText().toString() );
+                int id = Integer.valueOf(pomodoroViewHolder.pomodoroId.getText().toString());
                 int quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
 
-                if(timer != null){
+                if (timer != null) {
                     pomodoroViewHolder.btnIniciar.setEnabled(true);
                     timer.cancel();
                     timer = null;
-                    chronometro.setText("25:00");
+                    chronometro.setText(context.getString(R.string.vinte_cinco_minutos));
 
-                    if(quantidadePomodoros > 0) {
+                    if (quantidadePomodoros > 0) {
                         gerenciador.updateQuantidadePomodoros(id, quantidadePomodoros);
                         quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
-                        pomodoroViewHolder.pomodoroNum.setText(String.valueOf(String.valueOf(quantidadePomodoros)));
+                        pomodoroViewHolder.pomodoroNum.setText(String.valueOf(
+                                String.valueOf(quantidadePomodoros)));
                     }
                 }
             }
         });
 
-
-        pomodoroViewHolder.cv.setOnClickListener(new View.OnClickListener() {
+        pomodoroViewHolder.cv.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-
-                /*Intent intent = new Intent(v.getContext(), DetailPetAnimalActivity.class);
-                Bundle b = new Bundle();
-                b.putSerializable( v.getContext().getString( R.string.pet ),p);
-                intent.putExtras(b);
-                v.getContext().startActivity(intent);*/
+            public boolean onLongClick(View v) {
+                setPosition(pomodoroViewHolder.getPosition());
+                return false;
             }
         });
     }
@@ -124,7 +134,8 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public static class PomodoroViewHolder extends RecyclerView.ViewHolder {
+    public static class PomodoroViewHolder extends RecyclerView.ViewHolder
+            implements View.OnCreateContextMenuListener {
 
         CardView cv;
         TextView pomodoroTitulo;
@@ -143,6 +154,14 @@ public class RecicleViewPomodorosAdapter extends RecyclerView.Adapter<RecicleVie
             pomodoroId = (TextView)itemView.findViewById(R.id.textViewIdPomodoro);
             btnIniciar = (Button)itemView.findViewById(R.id.buttonIniciar);
             btnConcluir = (Button)itemView.findViewById(R.id.buttonConcluir);
+
+            itemView.setOnCreateContextMenuListener(this);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(0, v.getId(), 0, R.string.editar);
+            menu.add(0, v.getId(), 0, R.string.excluir);
         }
     }
 }

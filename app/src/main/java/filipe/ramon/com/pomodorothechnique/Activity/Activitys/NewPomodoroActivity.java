@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import filipe.ramon.com.pomodorothechnique.Activity.Business.GerenciadorPromodorosBusiness;
-import filipe.ramon.com.pomodorothechnique.Activity.Dao.PomodoroDao;
 import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.R;
 
@@ -17,6 +16,8 @@ public class NewPomodoroActivity extends AppCompatActivity {
     private EditText edDescricao;
     private EditText edPomodoros;
     private Button   btSalvar;
+    private int telaDeEdicao = 0;
+    private Pomodoro pomodoro;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,24 +26,45 @@ public class NewPomodoroActivity extends AppCompatActivity {
 
         iniciaComponentes();
 
+        if(this.getIntent().getExtras() != null) {
+            telaDeEdicao = Integer.valueOf(this.getIntent().getStringExtra(getString(R.string.editar)));
+            pomodoro     = (Pomodoro) this.getIntent().getSerializableExtra(getString(R.string.promodoros));
+        }
+
+        if(telaDeEdicao == 1) {
+            btSalvar.setText(getString(R.string.salvarEdicao));
+            preencheCampos(pomodoro);
+        }
+
         btSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Pomodoro p = new Pomodoro();
-                p.setTitulo(edTitulo.getEditableText().toString());
-                p.setDescricao(edDescricao.getEditableText().toString());
-                p.setPomodoro(Integer.valueOf(edPomodoros.getEditableText().toString()));
-                p.setAtivo(1);
-                p.setConcluido(0);
+                if(pomodoro == null)
+                    pomodoro = new Pomodoro();
+
+                pomodoro.setTitulo(edTitulo.getEditableText().toString());
+                pomodoro.setDescricao(edDescricao.getEditableText().toString());
+                pomodoro.setPomodoro(Integer.valueOf(edPomodoros.getEditableText().toString()));
+                pomodoro.setAtivo(1);
+                pomodoro.setConcluido(0);
 
                 GerenciadorPromodorosBusiness pBO = new GerenciadorPromodorosBusiness(NewPomodoroActivity.this);
-                pBO.insertPomodoro(p);
+
+                if(telaDeEdicao == 0)
+                    pBO.insertPomodoro(pomodoro);
+                else
+                    pBO.updatePomodoros(pomodoro);
 
                 finish();
             }
         });
+    }
 
+    private void preencheCampos(Pomodoro pomodoro){
+        edTitulo.setText(pomodoro.getTitulo());
+        edDescricao.setText(pomodoro.getDescricao());
+        edPomodoros.setText(String.valueOf(pomodoro.getPomodoro()));
     }
 
     private void iniciaComponentes(){

@@ -1,10 +1,13 @@
 package filipe.ramon.com.pomodorothechnique.Activity.Util;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.CountDownTimer;
 import android.provider.Settings;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Calendar;
@@ -22,6 +25,7 @@ public class MyCountDownTimer extends CountDownTimer {
     private TextView tvQuantidadePomodoros;
     private long timeInFuture;
     private int idPomodoro;
+    protected GerenciadorPromodorosBusiness gerenciador;
 
 
     public MyCountDownTimer(Context context, TextView tv, long timeInFuture, long interval, TextView tvBtnInicio, TextView tvQuantidadePomodoros, int idPomodoro){
@@ -42,32 +46,39 @@ public class MyCountDownTimer extends CountDownTimer {
     @Override
     public void onFinish() {
         timeInFuture -= 1000;
+        gerenciador = new GerenciadorPromodorosBusiness(context);
         tv.setText(getCorretcTimer(true, timeInFuture) + ":" + getCorretcTimer(false, timeInFuture));
         tvBtnInicio.setEnabled(true);
 
-        /*NOTIFICATION*/
+        //NOTIFICATION
+        gerenciador.notificacao();
 
-        Notification.Builder mBuilder = new Notification.Builder(context)
-                .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setContentTitle(context.getString(R.string.alertaIntervaloTitulo))
-                .setContentText(context.getString(R.string.intervalo_de_cinco_minutos))
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setAutoCancel(true);
-
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(0, mBuilder.build());
-
-        /*NOTIFICATION*/
-
-        /*Atualiza quantidade de pomodoros*/
-
-        GerenciadorPromodorosBusiness gerenciador = new GerenciadorPromodorosBusiness(context);
+        //Atualiza quantidade de pomodoros
         int quantidadePomodoros = Integer.valueOf(tvQuantidadePomodoros.getText().toString());
-
         gerenciador.updateQuantidadePomodoros(idPomodoro, quantidadePomodoros);
         tvQuantidadePomodoros.setText(String.valueOf(String.valueOf(gerenciador.getQuantidadePomodoros(String.valueOf(idPomodoro)))));
 
-        /*Atualiza quantidade de pomodoros*/
+        if(gerenciador.getQuantidadePomodoros(String.valueOf(idPomodoro)) > 0) {
+
+            new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.alert))
+                    .setMessage(context.getString(R.string.alert_descricao_pausa))
+                    .setCancelable(false)
+                    .setNegativeButton("Não",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                                gerenciador.ativaTimer(context, MyCountDownTimer.this, tv, 5,
+                                        (Button) tvBtnInicio, tvQuantidadePomodoros, idPomodoro);
+                            }
+                    }).create().show();
+
+        }
     }
 
     private String getCorretcTimer(boolean isMinute, long millisUntilFinished){
@@ -79,5 +90,4 @@ public class MyCountDownTimer extends CountDownTimer {
         aux = c.get(constCalendar) < 10 ? "0"+c.get(constCalendar) : ""+c.get(constCalendar);
         return(aux);
     }
-
 }
