@@ -31,17 +31,14 @@ public class RecicleViewPomodorosAdapter
         extends RecyclerView.Adapter<RecicleViewPomodorosAdapter.PomodoroViewHolder>{
 
     List<Pomodoro> listPomodoros;
-    private MyCountDownTimer timer;
     private TextView chronometro;
     private ListTasksActivity context;
     private GerenciadorPromodorosBusiness gerenciador;
     private int position;
 
-    public RecicleViewPomodorosAdapter(ListTasksActivity context, List<Pomodoro> pomodoros,
-                                       MyCountDownTimer timer, TextView chronometro){
+    public RecicleViewPomodorosAdapter(ListTasksActivity context, List<Pomodoro> pomodoros, TextView chronometro){
         this.context = context;
         this.listPomodoros = pomodoros;
-        this.timer = timer;
         this.chronometro = chronometro;
     }
 
@@ -80,17 +77,14 @@ public class RecicleViewPomodorosAdapter
             public void onClick(View v) {
 
                 gerenciador = new GerenciadorPromodorosBusiness(context);
-
                 int id = Integer.valueOf(pomodoroViewHolder.pomodoroId.getText().toString());
                 int quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
 
-                if (timer == null) {
-                    if (quantidadePomodoros > 0) {
-                        gerenciador.ativaTimer(context, timer, chronometro, 1,
-                                pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
-                    } else {
+                if (context.timer == null) {
+                    if (quantidadePomodoros > 0)
+                        gerenciador.ativaTimer(context, chronometro, 25, pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
+                    else
                         pomodoroViewHolder.pomodoroNum.setTextColor(Color.RED);
-                    }
                 }
             }
         });
@@ -104,10 +98,10 @@ public class RecicleViewPomodorosAdapter
                 int id = Integer.valueOf(pomodoroViewHolder.pomodoroId.getText().toString());
                 int quantidadePomodoros = gerenciador.getQuantidadePomodoros(String.valueOf(id));
 
-                if (timer != null) {
+                if (context.timer != null) {
                     pomodoroViewHolder.btnIniciar.setEnabled(true);
-                    timer.cancel();
-                    timer = null;
+                    context.timer.cancel();
+                    context.timer = null;
                     chronometro.setText(context.getString(R.string.vinte_cinco_minutos));
 
                     if (quantidadePomodoros > 0) {

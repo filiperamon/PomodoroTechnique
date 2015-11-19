@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import filipe.ramon.com.pomodorothechnique.Activity.Activitys.ListTasksActivity;
 import filipe.ramon.com.pomodorothechnique.Activity.Dao.PomodoroDao;
 import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
 import filipe.ramon.com.pomodorothechnique.Activity.Util.MyCountDownTimer;
@@ -19,7 +20,6 @@ import filipe.ramon.com.pomodorothechnique.R;
  */
 public class GerenciadorPromodorosBusiness {
 
-    private MyCountDownTimer timer;
     private TextView chronometro;
     private Context context;
     private PomodoroDao pomodoroDao;
@@ -28,7 +28,6 @@ public class GerenciadorPromodorosBusiness {
         this.context = context;
         pomodoroDao = new PomodoroDao(context);
     }
-
 
     //CRUD
     public void insertPomodoro(Pomodoro pomodoro) {
@@ -49,24 +48,48 @@ public class GerenciadorPromodorosBusiness {
     //CRUD
 
     public void updateQuantidadePomodoros(int id, int numPomodoros) {
-        pomodoroDao.updateQuantidadePomodoros(id, numPomodoros - 1);
+        pomodoroDao.updateQuantidadePomodoros(id, numPomodoros);
     }
 
     public int getQuantidadePomodoros(String id) {
         return pomodoroDao.getQuantidadePomodoros(id);
     }
 
-    public void ativaTimer(Context context,MyCountDownTimer timer, TextView chronometro, int mimutos, Button inicio, TextView quantidadePomodoros, int idPomodoro) {
-        timer = new MyCountDownTimer(context, chronometro, (mimutos * 60 * 1000), 1000, inicio, quantidadePomodoros, idPomodoro);
-        timer.start();
-        inicio.setEnabled(false);
+    public void ativarDesativarPomodoro(int id, int ativo) {
+        pomodoroDao.ativaDesativaPomodoto(id, ativo);
     }
 
-    public void notificacao(){
+    public void ativaTimer(ListTasksActivity context , TextView chronometro, int mimutos, Button inicio, TextView quantidadePomodoros, int idPomodoro) {
+        ativarDesativarPomodoro(idPomodoro, 1);
+        context.timer = new MyCountDownTimer(context, chronometro, (mimutos * 60 * 1000), 1000, inicio, quantidadePomodoros, idPomodoro);
+        context.timer.start();
+        inicio.setEnabled(false);
+
+        //IncrementaInteração
+        incrementaInteracaoPomodoro(idPomodoro, getAtualinteracaoPomodoro(idPomodoro) + 1);
+    }
+
+    public int getAtualinteracaoPomodoro(int id){
+        return pomodoroDao.getInteracaoPomodoros(String.valueOf(id));
+    }
+
+    public void incrementaInteracaoPomodoro(int id, int interacao){
+        pomodoroDao.incrementaInteracaoPomodoto(id, interacao);
+    }
+
+    public int getAtualTimerPomodoro(int id){
+        return pomodoroDao.getTimerPomodoros(String.valueOf(id));
+    }
+
+    public void updateTimerPomodoro(int id, int timer){
+        pomodoroDao.alteraTimerPomodoto(id,timer);
+    }
+
+    public void notificacao(int timer){
         Notification.Builder mBuilder = new Notification.Builder(context)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                 .setContentTitle(context.getString(R.string.pausa))
-                .setContentText(context.getString(R.string.intervalo_de_cinco_minutos))
+                .setContentText("Pare por " +timer+ " minutos e volte a atividade.")
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
                 .setAutoCancel(true);
 
@@ -74,4 +97,8 @@ public class GerenciadorPromodorosBusiness {
         mNotificationManager.notify(0, mBuilder.build());
     }
 
+    public int atualizaQuantidadePomodoro(int idPomodoro, int quantidadePomodoros){
+        updateQuantidadePomodoros(idPomodoro, quantidadePomodoros);
+        return getQuantidadePomodoros(String.valueOf(idPomodoro));
+    }
 }

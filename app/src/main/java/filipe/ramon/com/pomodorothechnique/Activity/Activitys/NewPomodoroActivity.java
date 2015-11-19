@@ -46,7 +46,7 @@ public class NewPomodoroActivity extends AppCompatActivity {
                 pomodoro.setTitulo(edTitulo.getEditableText().toString());
                 pomodoro.setDescricao(edDescricao.getEditableText().toString());
                 pomodoro.setPomodoro(Integer.valueOf(edPomodoros.getEditableText().toString()));
-                pomodoro.setAtivo(1);
+                pomodoro.setAtivo(0);
                 pomodoro.setConcluido(0);
 
                 GerenciadorPromodorosBusiness pBO = new GerenciadorPromodorosBusiness(NewPomodoroActivity.this);

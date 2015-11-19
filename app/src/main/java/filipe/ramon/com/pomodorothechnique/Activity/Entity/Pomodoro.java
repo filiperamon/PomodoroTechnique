@@ -15,7 +15,25 @@ public class Pomodoro implements Serializable {
     private int pomodoro;
     private int ativo;
     private int concluido;
+    private int tempo;
 
+    public int getInteracao() {
+        return interacao;
+    }
+
+    public void setInteracao(int interacao) {
+        this.interacao = interacao;
+    }
+
+    private int interacao;
+
+    public int getTempo() {
+        return tempo;
+    }
+
+    public void setTempo(int tempo) {
+        this.tempo = tempo;
+    }
 
     public void Pomodoro(){
 

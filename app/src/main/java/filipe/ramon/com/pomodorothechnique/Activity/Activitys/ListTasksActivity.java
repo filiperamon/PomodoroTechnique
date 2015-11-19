@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ import filipe.ramon.com.pomodorothechnique.R;
 
 public class ListTasksActivity extends AppCompatActivity {
 
-    private MyCountDownTimer timer;
+    public MyCountDownTimer timer;
     private RecyclerView rvList;
     private List<Pomodoro> listPomodoros;
     private TextView chronometro;
@@ -54,9 +53,7 @@ public class ListTasksActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        initializeData();
-        atualizarLista();
+        atualizaLista();
     }
 
     @Override
@@ -75,27 +72,20 @@ public class ListTasksActivity extends AppCompatActivity {
             return super.onContextItemSelected(item);
         }
         if (listPomodoros != null) {
-            //if (listPomodoros.get(position).getAtivo() == 0) {
 
-                if (item.getTitle().equals(getString(R.string.editar))) {
-                    Bundle bundle = new Bundle();
-                    Intent iEditTask = new Intent(ListTasksActivity.this, NewPomodoroActivity.class);
-                    bundle.putString(getString(R.string.editar), "1");
-                    bundle.putSerializable(getString(R.string.promodoros), listPomodoros.get(position));
-                    iEditTask.putExtras(bundle);
-                    startActivity(iEditTask);
+            if (item.getTitle().equals(getString(R.string.editar))) {
+                Bundle bundle = new Bundle();
+                Intent iEditTask = new Intent(ListTasksActivity.this, NewPomodoroActivity.class);
+                bundle.putString(getString(R.string.editar), "1");
+                bundle.putSerializable(getString(R.string.promodoros), listPomodoros.get(position));
+                iEditTask.putExtras(bundle);
+                startActivity(iEditTask);
 
-                    if (listPomodoros.get(position).getAtivo() == 0) {
-                        pBO = new GerenciadorPromodorosBusiness(this);
-                        pBO.deletaPomodoro(listPomodoros.get(position).getId());
-                        initializeData();
-                        atualizarLista();
-                        cancelaTimer();
-                    }
-
-               // } else {
-               //     Toast.makeText(this, "Pomodo ativado não pode sofrer alterações.", Toast.LENGTH_SHORT).show();
-               //}
+            } else if (item.getTitle().equals(getString(R.string.excluir))) {
+                pBO = new GerenciadorPromodorosBusiness(this);
+                pBO.deletaPomodoro(listPomodoros.get(position).getId());
+                atualizaLista();
+                cancelaTimer();
             }
         }
 
@@ -115,14 +105,15 @@ public class ListTasksActivity extends AppCompatActivity {
         btAdicionarTarefa = (Button) findViewById(R.id.buttonNewTask);
     }
 
-    private void initializeData() {
+    public void atualizaLista() {
         pBO = new GerenciadorPromodorosBusiness(this);
         listPomodoros = pBO.getTodosPomodoros();
+        atualizarLista();
     }
 
     public void atualizarLista() {
         if (listPomodoros != null) {
-            adapter = new RecicleViewPomodorosAdapter(this, listPomodoros, timer, chronometro);
+            adapter = new RecicleViewPomodorosAdapter(this, listPomodoros, chronometro);
             rvList.setAdapter(adapter);
         }
     }

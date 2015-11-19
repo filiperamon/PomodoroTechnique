@@ -17,9 +17,9 @@ import filipe.ramon.com.pomodorothechnique.Activity.Entity.Pomodoro;
  */
 public class PomodoroDao extends SQLiteOpenHelper {
 
-    private static int VERSION = 1;
+    private static int VERSION = 2;
     private static String TABELA = "Pomodoro";
-    private static String[] COLS = {"id","titulo","descricao","numero_pomodoros", "ativo","concluido"};
+    private static String[] COLS = {"id","titulo","descricao","numero_pomodoros","timer", "interacao","ativo","concluido"};
 
     public PomodoroDao(Context context){
         super(context, TABELA, null, VERSION);
@@ -32,6 +32,8 @@ public class PomodoroDao extends SQLiteOpenHelper {
                 " titulo TEXT, " +
                 " descricao TEXT, " +
                 " numero_pomodoros INTEGER, " +
+                " timer INTEGER," +
+                " interacao INTEGER," +
                 " ativo INTEGER, " +
                 " concluido INTEGER " +
                 ");";
@@ -49,7 +51,9 @@ public class PomodoroDao extends SQLiteOpenHelper {
         values.put("titulo",pomodoro.getTitulo());
         values.put("descricao",pomodoro.getDescricao());
         values.put("numero_pomodoros",pomodoro.getPomodoro());
-        values.put("ativo",1);
+        values.put("timer",25);
+        values.put("interacao",0);
+        values.put("ativo",0);
         values.put("concluido", 0);
         getWritableDatabase().insertOrThrow(TABELA, null, values);
     }
@@ -65,8 +69,9 @@ public class PomodoroDao extends SQLiteOpenHelper {
             p.setTitulo(c.getString(1));
             p.setDescricao(c.getString(2));
             p.setPomodoro(c.getInt(3));
-            p.setAtivo(c.getInt(4));
-
+            p.setTempo(c.getInt(5));
+            p.setInteracao(c.getInt(6));
+            p.setAtivo(c.getInt(7));
             pomodoros.add(p);
         }
 
@@ -112,5 +117,59 @@ public class PomodoroDao extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         String where = "id=?";
         return db.delete(TABELA, where, new String[]{String.valueOf(id)});
+    }
+
+    public void ativaDesativaPomodoto(int id, int ativo){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("ativo", ativo);
+
+        db.update(TABELA, newValues, "id = ? ", new String[]{String.valueOf(id)});
+    }
+
+    public void alteraTimerPomodoto(int id, int timer){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("timer", timer);
+
+        db.update(TABELA, newValues, "id = ? ", new String[]{String.valueOf(id)});
+    }
+
+    public int getTimerPomodoros(String id){
+        String selectQuery = "SELECT timer FROM "+TABELA+" WHERE id = " + id;
+
+        SQLiteDatabase banco = this.getWritableDatabase();
+        Cursor cursor = banco.rawQuery(selectQuery, null);
+
+        cursor.moveToFirst();
+
+        String nomeString = cursor.getString(cursor.getColumnIndex("timer"));
+        StringBuilder conversor = new StringBuilder();
+        conversor.append(nomeString);
+
+        return Integer.valueOf(conversor.toString());
+    }
+
+    public void incrementaInteracaoPomodoto(int id, int interacao){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues newValues = new ContentValues();
+        newValues.put("interacao", interacao);
+
+        db.update(TABELA, newValues, "id = ? ", new String[]{String.valueOf(id)});
+    }
+
+    public int getInteracaoPomodoros(String id){
+        String selectQuery = "SELECT interacao FROM "+TABELA+" WHERE id = " + id;
+
+        SQLiteDatabase banco = this.getWritableDatabase();
+        Cursor cursor = banco.rawQuery(selectQuery, null);
+
+        cursor.moveToFirst();
+
+        String nomeString = cursor.getString(cursor.getColumnIndex("interacao"));
+        StringBuilder conversor = new StringBuilder();
+        conversor.append(nomeString);
+
+        return Integer.valueOf(conversor.toString());
     }
 }

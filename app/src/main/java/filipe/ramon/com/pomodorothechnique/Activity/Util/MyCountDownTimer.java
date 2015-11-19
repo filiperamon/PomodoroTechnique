@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.Calendar;
 
+import filipe.ramon.com.pomodorothechnique.Activity.Activitys.ListTasksActivity;
 import filipe.ramon.com.pomodorothechnique.Activity.Business.GerenciadorPromodorosBusiness;
 import filipe.ramon.com.pomodorothechnique.R;
 
@@ -19,16 +20,17 @@ import filipe.ramon.com.pomodorothechnique.R;
  * Created by ufc155.barbosa on 09/11/2015.
  */
 public class MyCountDownTimer extends CountDownTimer {
-    private Context context;
+    private ListTasksActivity context;
     private TextView tv;
     private TextView tvBtnInicio;
     private TextView tvQuantidadePomodoros;
     private long timeInFuture;
     private int idPomodoro;
     protected GerenciadorPromodorosBusiness gerenciador;
+    int timerChonometro = 25;
 
 
-    public MyCountDownTimer(Context context, TextView tv, long timeInFuture, long interval, TextView tvBtnInicio, TextView tvQuantidadePomodoros, int idPomodoro){
+    public MyCountDownTimer(ListTasksActivity context, TextView tv, long timeInFuture, long interval, TextView tvBtnInicio, TextView tvQuantidadePomodoros, int idPomodoro){
         super(timeInFuture, interval);
         this.context = context;
         this.tv = tv;
@@ -50,34 +52,56 @@ public class MyCountDownTimer extends CountDownTimer {
         tv.setText(getCorretcTimer(true, timeInFuture) + ":" + getCorretcTimer(false, timeInFuture));
         tvBtnInicio.setEnabled(true);
 
-        //NOTIFICATION
-        gerenciador.notificacao();
+        if(gerenciador.getAtualTimerPomodoro(idPomodoro) == timerChonometro){
+            if((gerenciador.getAtualinteracaoPomodoro(idPomodoro)%4) == 0 ){
+                //LongPause
+                timerChonometro = 15;
+                gerenciador.updateTimerPomodoro(idPomodoro,15);
+                gerenciador.notificacao(timerChonometro);
+            } else {
+                //ShortPouse
+                timerChonometro = 5;
+                gerenciador.updateTimerPomodoro(idPomodoro,5);
+                gerenciador.notificacao(timerChonometro);
+            }
+        } else {
+            gerenciador.updateTimerPomodoro(idPomodoro,25);
+        }
 
         //Atualiza quantidade de pomodoros
-        int quantidadePomodoros = Integer.valueOf(tvQuantidadePomodoros.getText().toString());
-        gerenciador.updateQuantidadePomodoros(idPomodoro, quantidadePomodoros);
-        tvQuantidadePomodoros.setText(String.valueOf(String.valueOf(gerenciador.getQuantidadePomodoros(String.valueOf(idPomodoro)))));
+        tvQuantidadePomodoros.setText(String.valueOf(gerenciador.atualizaQuantidadePomodoro(
+                idPomodoro, Integer.valueOf(tvQuantidadePomodoros.getText().toString()) - 1)));
 
         if(gerenciador.getQuantidadePomodoros(String.valueOf(idPomodoro)) > 0) {
 
-            new AlertDialog.Builder(context)
-                    .setTitle(context.getString(R.string.alert))
-                    .setMessage(context.getString(R.string.alert_descricao_pausa))
-                    .setCancelable(false)
-                    .setNegativeButton("Não",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                                gerenciador.ativaTimer(context, MyCountDownTimer.this, tv, 5,
-                                        (Button) tvBtnInicio, tvQuantidadePomodoros, idPomodoro);
-                            }
-                    }).create().show();
+            if(timerChonometro == 25){
+                gerenciador.ativaTimer(context, tv, timerChonometro, (Button) tvBtnInicio, tvQuantidadePomodoros, idPomodoro);
+            } else {
 
+                new AlertDialog.Builder(context)
+                        .setTitle(context.getString(R.string.alert))
+                        .setMessage(context.getString(R.string.alert_descricao_pausa))
+                        .setCancelable(false)
+                        .setNegativeButton("Não",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+
+                                        gerenciador.ativarDesativarPomodoro(idPomodoro, 0);
+                                        context.atualizarLista();
+                                        dialog.cancel();
+
+                                    }
+                                })
+                        .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                gerenciador.ativaTimer(context, tv, timerChonometro, (Button) tvBtnInicio, tvQuantidadePomodoros, idPomodoro);
+                            }
+                        }).create().show();
+            }
+        } else {
+            gerenciador.ativarDesativarPomodoro(idPomodoro, 0);
+            context.atualizarLista();
         }
     }
 

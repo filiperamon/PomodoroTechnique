@@ -16,4 +16,5 @@
     <string name="vinte_cinco_minutos">25:00</string>
     <string name="alert">Alerta</string>
     <string name="alert_descricao_pausa">Deseja inicializar o descanso?</string>
+    <string name="nao_pode_alterar">Pomodoro ativado não pode sofrer alterações.</string>
 </resources>
