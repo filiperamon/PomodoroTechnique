@@ -82,7 +82,7 @@ public class RecicleViewPomodorosAdapter
 
                 if (context.timer == null) {
                     if (quantidadePomodoros > 0)
-                        gerenciador.ativaTimer(context, chronometro, 25, pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
+                        gerenciador.ativaTimer(context, chronometro, gerenciador.getAtualTimerPomodoro(id), pomodoroViewHolder.btnIniciar, pomodoroViewHolder.pomodoroNum, id);
                     else
                         pomodoroViewHolder.pomodoroNum.setTextColor(Color.RED);
                 }
